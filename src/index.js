@@ -13,7 +13,8 @@ export default {
       idleTime = 60 * 1000,
       events = ['mousemove', 'keydown', 'mousedown', 'touchstart'],
       keepTracking = true,
-      startAtIdle = true
+      startAtIdle = true,
+      useMethodChageIdle = false
     } = options || {}
 
     if (!eventEmitter && !store) {
@@ -43,8 +44,10 @@ export default {
         store && store.commit(`${moduleName}/IDLE_CHANGED`, true)
       },
       onActive () {
-        eventEmitter && eventEmitter.$emit(onActiveStr)
-        store && store.commit(`${moduleName}/IDLE_CHANGED`, false)
+        if (useMethodChageIdle === false) {
+          eventEmitter && eventEmitter.$emit(onActiveStr)
+          store && store.commit(`${moduleName}/IDLE_CHANGED`, false)
+        }
       }
     })
     idle.start()
@@ -56,6 +59,11 @@ export default {
         return {
           [onIdleStr]: null,
           [onActiveStr]: null
+        }
+      },
+      methods: {
+        stopIdle () {
+          store && store.commit(`${moduleName}/IDLE_CHANGED`, false)
         }
       },
       created () {
